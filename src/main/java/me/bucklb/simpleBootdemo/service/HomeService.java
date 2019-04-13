@@ -1,8 +1,10 @@
 package me.bucklb.simpleBootdemo.service;
 
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
-@Component
+//@Component
+@Service
 public class HomeService {
 
     String BR="<br>";
