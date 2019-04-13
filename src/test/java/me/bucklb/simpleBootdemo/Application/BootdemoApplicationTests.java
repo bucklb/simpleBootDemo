@@ -1,4 +1,4 @@
-package me.bucklb.simpleBootdemo;
+package me.bucklb.simpleBootdemo.Application;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
