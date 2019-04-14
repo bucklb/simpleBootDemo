@@ -1,10 +1,14 @@
 package me.bucklb.simpleBootdemo.Controller;
 
 // Needed for annotation
+import me.bucklb.simpleBootdemo.BootRunner;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
 import me.bucklb.simpleBootdemo.service.HomeService;
+import org.springframework.web.client.RestTemplate;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -19,8 +23,16 @@ public class HomeController {
     @Autowired
     HomeService homeService;
 
+    @Autowired
+    RestTemplate restTemplate;
+
+
     @Value("${server.port}")
     int APP_PORT;
+
+    Logger logger = LoggerFactory.getLogger(HomeController.class);
+
+
 
     // Need to push people to where swagger lives ... use redirect
     String REDIRECT_RTE="http://localhost:";
@@ -51,5 +63,120 @@ public class HomeController {
         httpServletResponse.setHeader("Location", redirect);
         httpServletResponse.setStatus(REDIRECT_CDE);
     }
+
+    /*
+        Primarily want to check that sleuth headers get detected
+     */
+    @RequestMapping(value="/ping",method = RequestMethod.GET)
+    public String getPing(HttpServletResponse httpServletResponse) {
+
+//        logger.info("pinged");
+
+        // Kick off to further end point so I can see the effect on headers
+        String pong = restTemplate.getForObject(REDIRECT_RTE+APP_PORT+"/pong" ,String.class);
+
+        return "ping " + pong;
+    }
+
+    /*
+        Primarily want to check that sleuth headers get detected
+     */
+    @RequestMapping(value="/pong",method = RequestMethod.GET)
+    public String getPong(HttpServletResponse httpServletResponse) {
+
+//        logger.info("ponged");
+        return "ponged";
+    }
+
+/*
+    To seed the situation need to pass in BOTH X-B3_TraceId & X-B3-SpanId, which need to be hex (up to 16 characters)
+
+
+    !! INTERESTINGLY !! Looks like the sleuth logging happens regardless of any requested logging !!!
+
+    EXAMPLE of important bits of the logging.
+    The start part of the logs are in order :
+        2019-04-14 22:34:41.144  INFO [-,,,] 15012 --- [nio-8090-exec-2] brave.Tracer
+        2019-04-14 22:34:41.145  INFO [-,,,] 15012 --- [nio-8090-exec-3] brave.Tracer
+        2019-04-14 22:34:41.149  INFO [-,,,] 15012 --- [nio-8090-exec-2] brave.Tracer
+
+    BUT THE PAYLOADS are not (payloads appear as 2,3,1.  Look like:
+
+        {
+           "traceId": "acca6d9a1b5bf929",
+           "parentId": "acca6d9a1b5bf929",
+           "id": "6ea65201854a3310",
+           "kind": "CLIENT",
+           "name": "get",
+           "timestamp": 1555277681098171,
+           "duration": 36452,
+           "localEndpoint": {
+              "serviceName": "\"simplebootdemonstration\"",
+              "ipv4": "192.168.1.11"
+           },
+           "tags": {
+              "http.method": "GET",
+              "http.path": "/pong"
+           }
+        }
+
+
+        {
+           "traceId": "acca6d9a1b5bf929",
+           "parentId": "acca6d9a1b5bf929",
+           "id": "6ea65201854a3310",
+           "kind": "SERVER",
+           "name": "get /pong",
+           "timestamp": 1555277681113589,
+           "duration": 23049,
+           "localEndpoint": {
+              "serviceName": "\"simplebootdemonstration\"",
+              "ipv4": "192.168.1.11"
+           },
+           "remoteEndpoint": {
+              "ipv4": "127.0.0.1",
+              "port": 54070
+           },
+           "tags": {
+              "http.method": "GET",
+              "http.path": "/pong",
+              "mvc.controller.class": "HomeController",
+              "mvc.controller.method": "getPong"
+           },
+           "shared": true
+        }
+
+        {
+           "traceId": "acca6d9a1b5bf929",
+           "id": "acca6d9a1b5bf929",
+           "kind": "SERVER",
+           "name": "get /ping",
+           "timestamp": 1555277681059019,
+           "duration": 90779,
+           "localEndpoint": {
+              "serviceName": "\"simplebootdemonstration\"",
+              "ipv4": "192.168.1.11"
+           },
+           "remoteEndpoint": {
+              "ipv6": "::1",
+              "port": 54069
+           },
+           "tags": {
+              "http.method": "GET",
+              "http.path": "/ping",
+              "mvc.controller.class": "HomeController",
+              "mvc.controller.method": "getPing"
+           }
+        }
+
+
+
+
+
+
+
+
+ */
+
 
 }

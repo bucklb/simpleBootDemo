@@ -91,11 +91,18 @@
 			<scope>test</scope>
 		</dependency>
 
+        <!-- Try & get sleuth stuff ... -->
 		<dependency>
 			<groupId>org.springframework.cloud</groupId>
 			<artifactId>spring-cloud-starter-sleuth</artifactId>
 			<version>2.1.1.RELEASE</version>
 		</dependency>
+        <!-- Integrates so you can use log patterns like %X{traceId}/%X{spanId} -->
+        <dependency>
+            <groupId>io.zipkin.brave</groupId>
+            <artifactId>brave-context-slf4j</artifactId>
+            <version>5.6.0</version>
+        </dependency>
 
 	<!--
     <dependency>
