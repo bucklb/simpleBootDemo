@@ -23,8 +23,8 @@
 	-->
 	<properties>
 		<!--<java.version>1.8</java.version>-->
-		<maven.compiler.source>1.11</maven.compiler.source>
-		<maven.compiler.target>1.11</maven.compiler.target>
+		<maven.compiler.source>1.10</maven.compiler.source>
+		<maven.compiler.target>1.10</maven.compiler.target>
 		<powermock-module.version>1.7.0</powermock-module.version>
 	</properties>
 
@@ -153,7 +153,8 @@
 						<configuration>
 							<rules>
 								<requireMavenVersion>
-									<version>3.5.4</version>
+									<!--<version>3.5.4</version>-->
+									<version>3.3.9</version>
 								</requireMavenVersion>
 							</rules>
 						</configuration>
