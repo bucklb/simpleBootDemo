@@ -22,24 +22,28 @@ import org.springframework.context.annotation.Configuration;
 
 /*
     Controls aspects of tracing such as the service name that shows up in the UI
+
+    IF enable this to be detected as a bean then seems to do its own Zipkin style thing and at the same time interfere
+    with the logging I'm trying to do (trace, span, parent tracking)
+
 */
-@Configuration
+//@Configuration
 public class SleuthConfig {
 
-//    @Bean
-//    Tracing tracing(@Value("${spring.application.name}") String serviceName) {
-//        return Tracing.newBuilder()
-//                .localServiceName(serviceName)
-//                .propagationFactory(ExtraFieldPropagation.newFactory(B3Propagation.FACTORY, "user-name"))
-//                .currentTraceContext(ThreadLocalCurrentTraceContext.newBuilder()
-//                        .addScopeDecorator(MDCScopeDecorator.create()) // puts trace IDs into logs
-//                        .build()
-//                )
-//                .build();
-//
-//
-////                .spanReporter(spanReporter()).build();
-//    }
+    @Bean
+    Tracing tracing(@Value("${spring.application.name}") String serviceName) {
+        return Tracing.newBuilder()
+                .localServiceName(serviceName)
+                .propagationFactory(ExtraFieldPropagation.newFactory(B3Propagation.FACTORY, "user-name"))
+                .currentTraceContext(ThreadLocalCurrentTraceContext.newBuilder()
+                        .addScopeDecorator(MDCScopeDecorator.create()) // puts trace IDs into logs
+                        .build()
+                )
+                .build();
+
+
+//                .spanReporter(spanReporter()).build();
+    }
 
 
 }
