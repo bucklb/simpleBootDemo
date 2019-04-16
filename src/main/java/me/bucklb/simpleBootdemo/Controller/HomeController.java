@@ -72,7 +72,7 @@ public class HomeController {
     public String getPing(HttpServletResponse httpServletResponse) {
 
 //        logger.info("pinged");
-        showSleuth();
+        showSleuth("ping");
 
         // Kick off to further end point so I can see the effect on headers
         String pong = restTemplate.getForObject(REDIRECT_RTE+APP_PORT+"/pong" ,String.class);
@@ -85,8 +85,7 @@ public class HomeController {
     @RequestMapping(value="/pong",method = RequestMethod.GET)
     public String getPong(HttpServletResponse httpServletResponse) {
 
-        //        logger.info("ponged");
-        showSleuth();
+        showSleuth("pong");
 
         String pang = restTemplate.getForObject(REDIRECT_RTE+APP_PORT+"/pang" ,String.class);
         return "ponged " + pang;
@@ -99,7 +98,7 @@ public class HomeController {
     public String getPang(HttpServletResponse httpServletResponse) {
 
 //        logger.info("panged");
-        showSleuth();
+        showSleuth("pang");
 
         return "panged";
     }
@@ -107,11 +106,15 @@ public class HomeController {
     /*
         Show what's going on with sleuth as we pass through (specifically what happens with parent/span
      */
-    private void showSleuth() {
+    private void showSleuth(String msg) {
+
+        // Might as well do the logging as we dump the debug
+        logger.info(msg);
+
 
         // Ideally want null to be displayed as same length string ...
-        String parentId = MDC.get("parentId")==null ? "null            " : MDC.get("parentId");
-        System.out.println("sleuth  ->   trace=" + MDC.get("traceId") + "   parent=" + parentId    + "   span=" + MDC.get("spanId"));
+//        String parentId = MDC.get("parentId")==null ? "null            " : MDC.get("parentId");
+//        System.out.println("sleuth  ->   trace=" + MDC.get("traceId") + "   parent=" + parentId    + "   span=" + MDC.get("spanId"));
 
     }
 

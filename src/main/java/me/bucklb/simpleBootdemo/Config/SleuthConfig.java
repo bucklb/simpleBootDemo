@@ -20,24 +20,26 @@ import org.springframework.context.annotation.Bean;
 import brave.context.slf4j.MDCScopeDecorator;
 import org.springframework.context.annotation.Configuration;
 
+/*
+    Controls aspects of tracing such as the service name that shows up in the UI
+*/
 @Configuration
 public class SleuthConfig {
 
-    /** Controls aspects of tracing such as the service name that shows up in the UI */
-    @Bean
-    Tracing tracing(@Value("${spring.application.name}") String serviceName) {
-        return Tracing.newBuilder()
-                .localServiceName(serviceName)
-                .propagationFactory(ExtraFieldPropagation.newFactory(B3Propagation.FACTORY, "user-name"))
-                .currentTraceContext(ThreadLocalCurrentTraceContext.newBuilder()
-                        .addScopeDecorator(MDCScopeDecorator.create()) // puts trace IDs into logs
-                        .build()
-                )
-                .build();
-
-
-//                .spanReporter(spanReporter()).build();
-    }
+//    @Bean
+//    Tracing tracing(@Value("${spring.application.name}") String serviceName) {
+//        return Tracing.newBuilder()
+//                .localServiceName(serviceName)
+//                .propagationFactory(ExtraFieldPropagation.newFactory(B3Propagation.FACTORY, "user-name"))
+//                .currentTraceContext(ThreadLocalCurrentTraceContext.newBuilder()
+//                        .addScopeDecorator(MDCScopeDecorator.create()) // puts trace IDs into logs
+//                        .build()
+//                )
+//                .build();
+//
+//
+////                .spanReporter(spanReporter()).build();
+//    }
 
 
 }
