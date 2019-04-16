@@ -2,6 +2,7 @@ package me.bucklb.simpleBootdemo;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.slf4j.MDC;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
@@ -14,5 +15,8 @@ public class BootRunner implements CommandLineRunner{
     public void run(String... strings) throws Exception {
         System.out.println("Runner is running ...");
         logger.info("BootRunner active");
+
+
+
     }
 }

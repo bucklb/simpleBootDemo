@@ -4,6 +4,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.slf4j.MDC;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
@@ -19,6 +20,12 @@ public class LoggerTest {
     public void testLogging() {
 
         logger.info("log message");
+
+        System.out.println(MDC.get("traceId"));
+        System.out.println(MDC.get("X-B3-TraceId"));
+
+
+
     }
 
 

@@ -4,6 +4,7 @@ package me.bucklb.simpleBootdemo.Controller;
 import me.bucklb.simpleBootdemo.BootRunner;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
@@ -71,10 +72,10 @@ public class HomeController {
     public String getPing(HttpServletResponse httpServletResponse) {
 
 //        logger.info("pinged");
+        showSleuth();
 
         // Kick off to further end point so I can see the effect on headers
         String pong = restTemplate.getForObject(REDIRECT_RTE+APP_PORT+"/pong" ,String.class);
-
         return "ping " + pong;
     }
 
@@ -84,15 +85,47 @@ public class HomeController {
     @RequestMapping(value="/pong",method = RequestMethod.GET)
     public String getPong(HttpServletResponse httpServletResponse) {
 
-//        logger.info("ponged");
-        return "ponged";
+        //        logger.info("ponged");
+        showSleuth();
+
+        String pang = restTemplate.getForObject(REDIRECT_RTE+APP_PORT+"/pang" ,String.class);
+        return "ponged " + pang;
+    }
+
+    /*
+        Primarily want to check that sleuth headers get detected
+     */
+    @RequestMapping(value="/pang",method = RequestMethod.GET)
+    public String getPang(HttpServletResponse httpServletResponse) {
+
+//        logger.info("panged");
+        showSleuth();
+
+        return "panged";
+    }
+
+    /*
+        Show what's going on with sleuth as we pass through (specifically what happens with parent/span
+     */
+    private void showSleuth() {
+
+        // Ideally want null to be displayed as same length string ...
+        String parentId = MDC.get("parentId")==null ? "null            " : MDC.get("parentId");
+        System.out.println("sleuth  ->   trace=" + MDC.get("traceId") + "   parent=" + parentId    + "   span=" + MDC.get("spanId"));
+
     }
 
 /*
     To seed the situation need to pass in BOTH X-B3_TraceId & X-B3-SpanId, which need to be hex (up to 16 characters)
 
+    Interplay of trace & spanId demonstrated via ping-pong-pang.  The original span becomes the parent of the next span
+        sleuth  ->   trace=005b115a92999999   parent=null               span=005b115a92666666
+        sleuth  ->   trace=005b115a92999999   parent=005b115a92666666   span=32d806e5f27ee63e
+        sleuth  ->   trace=005b115a92999999   parent=32d806e5f27ee63e   span=95a0a0998927ead9
+
 
     !! INTERESTINGLY !! Looks like the sleuth logging happens regardless of any requested logging !!!
+    BUT this is a function of the sleuthConfig & tracer stuff.  If they get removed the extra logging goes with them. See effect by commenting out the bean
 
     EXAMPLE of important bits of the logging.
     The start part of the logs are in order :
