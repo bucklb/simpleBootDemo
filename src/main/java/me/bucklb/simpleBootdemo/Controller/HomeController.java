@@ -7,6 +7,9 @@ import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import me.bucklb.simpleBootdemo.service.HomeService;
 import org.springframework.web.client.RestTemplate;
@@ -69,14 +72,29 @@ public class HomeController {
         Primarily want to check that sleuth headers get detected
      */
     @RequestMapping(value="/ping",method = RequestMethod.GET)
-    public String getPing(HttpServletResponse httpServletResponse) {
+//    public String getPing(HttpServletResponse httpServletResponse) {
+    public ResponseEntity<String> getPing(HttpServletResponse httpServletResponse) {
 
 //        logger.info("pinged");
         showSleuth("ping");
 
-        // Kick off to further end point so I can see the effect on headers
-        String pong = restTemplate.getForObject(REDIRECT_RTE+APP_PORT+"/pong" ,String.class);
-        return "ping " + pong;
+        if(2>1) {
+            // Let system do our headers
+            ResponseEntity<String> re = restTemplate.getForEntity(REDIRECT_RTE + APP_PORT + "/pong", String.class);
+            String pong = re.getBody();
+            return new ResponseEntity<String>("ping " + pong, HttpStatus.OK);
+        } else {
+
+
+            // Kick off to further end point so I can see the effect on headers
+            String pong = restTemplate.getForObject(REDIRECT_RTE + APP_PORT + "/pong", String.class);
+//        return "ping " + pong;
+            HttpHeaders httpHeaders = new HttpHeaders();
+            httpHeaders.add("Sleuth", "Strewth");
+            return new ResponseEntity<String>("ping " + pong, httpHeaders, HttpStatus.OK);
+        }
+
+
     }
 
     /*
@@ -87,20 +105,33 @@ public class HomeController {
 
         showSleuth("pong");
 
-        String pang = restTemplate.getForObject(REDIRECT_RTE+APP_PORT+"/pang" ,String.class);
+//        String pang = restTemplate.getForObject(REDIRECT_RTE+APP_PORT+"/pang" ,String.class);
+
+        ResponseEntity<String> re= restTemplate.getForEntity(REDIRECT_RTE+APP_PORT+"/pang" ,String.class);
+        String pang = re.getBody();
+
+
         return "ponged " + pang;
+
+
+
+
     }
 
     /*
         Primarily want to check that sleuth headers get detected
      */
     @RequestMapping(value="/pang",method = RequestMethod.GET)
-    public String getPang(HttpServletResponse httpServletResponse) {
+    public ResponseEntity<String> getPang(HttpServletResponse httpServletResponse) {
 
 //        logger.info("panged");
         showSleuth("pang");
 
-        return "panged";
+        // Force returning with headers
+//        return "panged";
+        HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.add("Sleuth","Strewth");
+        return new ResponseEntity<String>("panged", httpHeaders, HttpStatus.OK );
     }
 
     /*
