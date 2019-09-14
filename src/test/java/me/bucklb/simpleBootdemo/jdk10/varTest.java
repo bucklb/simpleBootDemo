@@ -16,7 +16,8 @@ import static java.util.stream.Collectors.toSet;
 public class varTest {
 
 
-
+/*
+    // 2/7/19 : not got jdk11 on just yet
 
 
     @Test
@@ -95,5 +96,5 @@ public class varTest {
         X z=new X(); z.id=1; z.v=List.of("one","II","five");    // <- NB this has index 1 as well
         return List.of(x,y,z);
     }
-
+*/
 }

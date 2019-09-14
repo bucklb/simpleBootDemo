@@ -1,10 +1,9 @@
 package me.bucklb.simpleBootdemo.Controller;
 
 // Needed for annotation
-import me.bucklb.simpleBootdemo.BootRunner;
+import me.bucklb.simpleBootdemo.ErrorHandling.BootDemoRunTimeException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
@@ -12,7 +11,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import me.bucklb.simpleBootdemo.service.HomeService;
-import org.springframework.web.client.RestTemplate;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -28,7 +26,7 @@ public class HomeController {
     HomeService homeService;
 
     @Autowired
-    RestTemplate restTemplate;
+    BootDemoRestTemplate restTemplate;
 
 
     @Value("${server.port}")
@@ -131,7 +129,19 @@ public class HomeController {
 //        return "panged";
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.add("Sleuth","Strewth");
-        return new ResponseEntity<String>("panged", httpHeaders, HttpStatus.OK );
+
+        if (0>1) {
+            // 14/9/19 - playing with dealing with 403 & such like with restTemplate.  Old way
+            return new ResponseEntity<String>("panged", httpHeaders, HttpStatus.OK );
+        } else {
+            // This should get picked up by exception handler
+            // and then restTemplate's errorHandler,
+            // that will in turn raise an exception
+            // and repeat ....
+            // Key bit is to throw exception, to trigger returning an ErrorMessage in theresponse
+            System.out.println("getPang throwing an exception ...");
+            throw new BootDemoRunTimeException("418","Tea Time!!");
+        }
     }
 
     /*
