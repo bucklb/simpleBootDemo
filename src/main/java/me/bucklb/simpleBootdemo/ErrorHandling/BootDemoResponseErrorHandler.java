@@ -37,7 +37,7 @@ public class BootDemoResponseErrorHandler implements ResponseErrorHandler {
         return !isAcceptable;
     }
 
-
+    // Step II - turn an ErrorMessage (passed within clientHttpResponse) in to a BootDemoRTE
     @Override
     public void handleError(ClientHttpResponse clientHttpResponse) throws IOException {
 
@@ -62,7 +62,9 @@ public class BootDemoResponseErrorHandler implements ResponseErrorHandler {
             }
 
             System.out.println("Throw exception here");
-            throw new BootDemoRunTimeException(errMsg.getCode(), errMsg.getMessage());
+            // Rather than create execption with contents of the message, create it with the message
+            //            throw new BootDemoRunTimeException(errMsg.getCode(), errMsg.getMessage());
+            throw new BootDemoRunTimeException(errMsg);
         }
     }
 

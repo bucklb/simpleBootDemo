@@ -130,17 +130,35 @@ public class HomeController {
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.add("Sleuth","Strewth");
 
-        if (0>1) {
-            // 14/9/19 - playing with dealing with 403 & such like with restTemplate.  Old way
-            return new ResponseEntity<String>("panged", httpHeaders, HttpStatus.OK );
+        int flg=2;
+
+
+        if (flg>3) {
+            // Throw a non-special exception and see how things cope.
+            throw new RuntimeException("Bang!");
         } else {
-            // This should get picked up by exception handler
-            // and then restTemplate's errorHandler,
-            // that will in turn raise an exception
-            // and repeat ....
-            // Key bit is to throw exception, to trigger returning an ErrorMessage in theresponse
-            System.out.println("getPang throwing an exception ...");
-            throw new BootDemoRunTimeException("418","Tea Time!!");
+
+            if (flg>1){
+                // Step I - throw BootDemoRTE that will become an ErrMsg & in turn another BootDemoRTE, etc
+
+                // throw "special" exception to test how we can elegantly handle stuff
+
+                // This should get picked up by exception handler
+                // and then restTemplate's errorHandler,
+                // that will in turn raise an exception
+                // and repeat ....
+                // Key bit is to throw exception, to trigger returning an ErrorMessage in theresponse
+                System.out.println("getPang throwing an exception ...");
+                if(0>1) {
+                    throw new BootDemoRunTimeException("418", "Tea Time!!");
+                } else {
+                    // two values back from a service (in the way that view-nisp-stub doesn't)
+                    throw new BootDemoRunTimeException(homeService.getPangErrorResponse());
+                }
+            } else {
+                // a benign response
+                return new ResponseEntity<String>("panged", httpHeaders, HttpStatus.OK );
+            }
         }
     }
 

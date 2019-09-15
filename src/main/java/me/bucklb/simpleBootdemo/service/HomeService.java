@@ -1,5 +1,6 @@
 package me.bucklb.simpleBootdemo.service;
 
+import me.bucklb.simpleBootdemo.ErrorHandling.ErrorMessage;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
@@ -15,5 +16,15 @@ public class HomeService {
                 "info:    get      : swagger documentation\n"+BR;
         return s;
     }
+
+    // Want to see how to get a response that is not httpSpecific, but certainly could become so
+    public ErrorMessage getPangErrorResponse() {
+        ErrorMessage errMsg=new ErrorMessage("401","Forbidden!");
+        return errMsg;
+    }
+
+
+
+
 
 }
